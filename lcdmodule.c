@@ -31,6 +31,8 @@ int delays(int s) {
 	return nanosleep(&tim, &timr);
 }
 
+uint32_t *currentFont, cSH, cSW, cSC;
+
 
 static PyObject* lcd_open(PyObject* self, PyObject *args) {
 	int r;
@@ -51,6 +53,7 @@ static PyObject* lcd_close(PyObject* self, PyObject *args) {
 	bcm2835_spi_end();
 	int r = bcm2835_close();
 	if(r!=1) return Py_BuildValue("l", -1);
+	if(currentFont!=NULL) free(currentFont);
 	return Py_BuildValue("l", 0);
 }
 
@@ -178,12 +181,17 @@ void lcd_matrix_native(uint32_t x,
 		       uint32_t ex,
 		       uint32_t ey,
 		       uint32_t *matrix,
-		       uint32_t size)
+		       uint32_t size,
+		       uint8_t transform,
+		       uint32_t transformer)
 {
+	uint32_t val;
 	lcd_area(x,y,ex,ey);
 	for(uint32_t i=0; i<size; i++) {
-		lcd_data(matrix[i]);
-		lcd_data(matrix[i]&0xff);
+		val = matrix[i];
+		if(transform == 1) val = val *transformer;
+		lcd_data(val);
+		lcd_data(val);
 	}
 }
 
@@ -202,10 +210,62 @@ static PyObject* lcd_matrix(PyObject* self, PyObject* args) {
 	  tmp = PyInt_AsLong(temp);
 	  matrix[i] = tmp;
 	}
-	lcd_matrix_native(x,y,ex,ey,matrix,size);
+	lcd_matrix_native(x,y,ex,ey,matrix,size,0,0);
 	free(matrix);
 	return Py_BuildValue("l",0);
 }
+
+
+static PyObject* lcd_load_font(PyObject* self, PyObject* args)
+{
+	uint32_t c_w, c_h, c_c, *fnt, size, val;
+	PyObject *fontMatrix, *temp;
+	PyArg_ParseTuple(args,"IIIO!",&c_w, &c_h, &c_c, &PyList_Type, &fontMatrix);
+	size = PyList_Size(fontMatrix);
+	fnt = (uint32_t *)malloc(sizeof(uint32_t)*size);
+	memset(fnt,0, sizeof(uint32_t)*size);
+	for(uint32_t i=0;i<size;i++) {
+		temp = PyList_GetItem(fontMatrix, i);
+	 	val = PyInt_AsLong(temp);
+		if(val>0) {
+		  fnt[i] = 1;
+		} else {
+		  fnt[i] = 0;
+	 	}
+	}
+	if(currentFont != NULL) {
+	 free(currentFont);
+	}
+	currentFont =fnt;
+	cSW = c_w;
+	cSH = c_h;
+	cSC = c_c;
+
+	return Py_BuildValue("l", 0);
+}
+
+static PyObject* lcd_draw_symbol(PyObject* self, PyObject* args) 
+{
+	uint32_t sym, x, y, curp, clr;
+	PyArg_ParseTuple(args, "IIII", &x, &y, &sym, &clr);
+	lcd_area(x,y,x+cSW-1,y+cSH);
+	for(uint32_t i=0; i<cSH; i++) {
+		curp = (cSC*i+sym)*cSW;
+		for(uint32_t j=0; j<cSW; j++, curp++) {
+			if(currentFont[curp]>0) {
+				lcd_data(clr);
+				lcd_data(clr);
+			} else {
+				lcd_data(0x00);
+				lcd_data(0x00);
+			}
+		}
+	}
+	return Py_BuildValue("l",0);
+}
+
+
+
 
 static PyObject* lcd_rectangle(PyObject* self, PyObject* args) {
 	uint32_t clr, x, y, ex, ey;
@@ -223,6 +283,7 @@ static PyObject* lcd_rectangle_empty(PyObject *self, PyObject* args) {
 
 	return Py_BuildValue("l",0);
 }
+
 
 static PyObject* lcd_init(PyObject* self, PyObject*args) {
 	lcd_reset(self, args);
@@ -404,6 +465,8 @@ static PyMethodDef LcdMethods[] = {
 	{ "lcdRectangle", lcd_rectangle, METH_VARARGS},
 	{ "lcdRectangleEmpty", lcd_rectangle_empty, METH_VARARGS},
 	{ "lcdMatrix", lcd_matrix, METH_VARARGS},
+	{ "lcdLoadFont", lcd_load_font, METH_VARARGS},
+	{ "lcdDrawSymbol", lcd_draw_symbol, METH_VARARGS},
 	{NULL, NULL}
 };
 
