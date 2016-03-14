@@ -1,0 +1,3 @@
+#!/bin/bash
+gcc -shared -I/usr/include/python2.7/ lcdmodule.c -o lcdmodule.so -lbcm2835 -std=c99
+
