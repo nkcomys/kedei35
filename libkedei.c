@@ -149,6 +149,12 @@ void lcd_rectangle(uint32_t x, uint32_t y, uint32_t ex, uint32_t ey, uint32_t cl
 	}
 }
 
+void lcd_rectangle_empty(uint32_t x, uint32_t y, uint32_t ex, uint32_t ey,  uint32_t clr1, uint32_t clr2)
+{
+	lcd_rectangle(x,y,ex,ey,clr1);
+	lcd_rectangle(x+1,y+1,ex-1,ey-1,clr2);
+}
+
 
 void lcd_matrix(uint32_t x,
 		       uint32_t y,
