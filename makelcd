@@ -1,3 +1,7 @@
 #!/bin/bash
-gcc -shared -I/usr/include/python2.7/ lcdmodule.c -o lcdmodule.so -lbcm2835 -std=c99
+gcc -fPIC -std=c11 -shared -o libkedei.so libkedei.c -L. -lbcm2835 
+gcc -fPIC -std=c11 -shared -I/usr/include/python2.7/ -o lcdmodule.so lcdmodule.c -L. -lkedei
+
+
+
 
