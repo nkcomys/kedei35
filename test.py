@@ -28,5 +28,6 @@ print "Clear", lcdClear(0x00);
 print "Matrix" ,lcdMatrix(10,10,width+9,height+9,matrix);
 print "Loading font", lcdLoadFont(12,16,96, fm);
 print "Draw symbol", lcdDrawSymbol(0,300,24, 0xfa);
+print "Draw string", lcdDrawString(0,220, 0x20, "Hello!", 0xfa);
 print "Closing", lcdClose();
 

@@ -244,10 +244,9 @@ static PyObject* lcd_load_font(PyObject* self, PyObject* args)
 	return Py_BuildValue("l", 0);
 }
 
-static PyObject* lcd_draw_symbol(PyObject* self, PyObject* args) 
+void lcd_draw_symbol_native(uint32_t x, uint32_t y, uint32_t sym, uint32_t clr)
 {
-	uint32_t sym, x, y, curp, clr;
-	PyArg_ParseTuple(args, "IIII", &x, &y, &sym, &clr);
+	uint32_t curp;
 	lcd_area(x,y,x+cSW-1,y+cSH);
 	for(uint32_t i=0; i<cSH; i++) {
 		curp = (cSC*i+sym)*cSW;
@@ -260,6 +259,28 @@ static PyObject* lcd_draw_symbol(PyObject* self, PyObject* args)
 				lcd_data(0x00);
 			}
 		}
+	}
+}
+
+static PyObject* lcd_draw_symbol(PyObject* self, PyObject* args)
+{
+	uint32_t sym, x, y, clr;
+	PyArg_ParseTuple(args, "IIII", &x, &y, &sym, &clr);
+	lcd_draw_symbol_native(x,y,sym,clr);
+	return Py_BuildValue("l",0);
+}
+
+static PyObject* lcd_draw_string(PyObject* self, PyObject* args)
+{
+	uint32_t x,y,curp, base, clr, i;
+	const char *s;
+	PyArg_ParseTuple(args, "IIIsI", &x, &y, &base, &s, &clr);
+	i=0;
+	while(s[i]!='\0') {
+	 uint32_t sym = s[i]-base;
+	 lcd_draw_symbol_native(x,y,sym, clr);
+	 x= x+cSW;
+	 i++;
 	}
 	return Py_BuildValue("l",0);
 }
@@ -467,6 +488,7 @@ static PyMethodDef LcdMethods[] = {
 	{ "lcdMatrix", lcd_matrix, METH_VARARGS},
 	{ "lcdLoadFont", lcd_load_font, METH_VARARGS},
 	{ "lcdDrawSymbol", lcd_draw_symbol, METH_VARARGS},
+	{ "lcdDrawString", lcd_draw_string, METH_VARARGS},
 	{NULL, NULL}
 };
 
