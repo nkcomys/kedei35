@@ -175,11 +175,19 @@ void lcd_matrix(uint32_t x,
 	}
 }
 
-void lcd_load_chars(uint32_t cw, uint32_t ch, uint32_t cc, uint32_t* matrix){
+void lcd_load_chars(uint32_t cw, uint32_t ch, uint32_t cc, uint32_t[] matrix, uint32_t length){
     if(currentFont != NULL) {
 	 free(currentFont);
     }
-    currentFont =matrix;
+    currentFont = (uint32_t*)malloc(length*sizeof(uint32_t));
+	memset(currentFont, 0, length*sizeof(uint32_t));
+	for(uint32_t i=0;i<length;i++){
+		if(matrix[i]>0) {
+			currentFont[i] = 1;
+		} else {
+			currentFont[i] = 0;
+		}
+	}
 	cSW = cw;
 	cSH = ch;
 	cSC = cc;

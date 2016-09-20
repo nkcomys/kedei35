@@ -59,7 +59,7 @@ static PyObject* py_lcd_load_chars(PyObject* self, PyObject* args)
 		  fnt[i] = 0;
 	 	}
 	}
-	lcd_load_chars(c_w, c_h, c_c, fnt);
+	lcd_load_chars(c_w, c_h, c_c, *fnt, size);
 	return Py_BuildValue("l", 0);
 }
 
