@@ -175,7 +175,7 @@ void lcd_matrix(uint32_t x,
 	}
 }
 
-void lcd_load_chars(uint32_t cw, uint32_t ch, uint32_t cc, uint32_t[] matrix, uint32_t length){
+void lcd_load_chars(uint32_t cw, uint32_t ch, uint32_t cc, uint32_t *matrix,uint32_t length){
     if(currentFont != NULL) {
 	 free(currentFont);
     }

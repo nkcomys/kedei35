@@ -22,7 +22,7 @@ for fy in range(0, 16):
 		frgb = fnt.getpixel((fx,fy));
 		fm.append(frgb);
 		
-print "Openining", lcdOpen();
+print "Openining", lcdOpen();	
 print "Init", lcdInit();
 print "Clear", lcdClear(0x00);
 print "Matrix" ,lcdMatrix(10,10,width+9,height+9,matrix);
