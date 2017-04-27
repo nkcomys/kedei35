@@ -50,16 +50,24 @@ while True:
     cmatrix = grab_screenRGB565(sx,sy,swidth,sheight)
     smatrix = []
     for i in cmatrix: smatrix.append( i )
+
+    for y in range(smy-sy-1, smy-sy+2):
+        for x in range(smx-sx-1, smx-sx+2):
+            i = y*swidth+x
+            if(i>=0 and i<len(smatrix)):
+                smatrix[i] = ~ smatrix[i]
+            
+    
     lcdMatrix(0,0,swidth,sheight,smatrix)
 
-    lcdArea(smx-sx,smy-sy,smx-sx+4,smy-sy+4)
-    for i in range(0, 25): lcdData(0x0000)
+    #lcdArea(smx-sx,smy-sy,smx-sx+4,smy-sy+4)
+    #for i in range(0, 25): lcdData(0x0000)
     
-    lcdArea(smx-sx+1,smy-sy+1,smx-sx+3,smy-sy+3)
-    for i in range(0, 9): lcdData(0xFFFF)
+    #lcdArea(smx-sx+1,smy-sy+1,smx-sx+3,smy-sy+3)
+    #for i in range(0, 9): lcdData(0xFFFF)
 
-    lcdArea(smx-sx+2,smy-sy+2,smx-sx+2,smy-sy+2)
-    lcdData(0x0000)
+    #lcdArea(smx-sx+2,smy-sy+2,smx-sx+2,smy-sy+2)
+    #lcdData(0x0000)
 
 print "Closing", lcdClose();
 
