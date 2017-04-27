@@ -1,0 +1,7 @@
+#!/bin/bash
+gcc -fPIC -std=c11 -shared -o libkedei.so libkedei.c -L. -lbcm2835 
+gcc -fPIC -std=c11 -shared -I/usr/include/python2.7/ -o lcdmodule.so lcdmodule.c -L. -lkedei
+gcc -shared -O3 -lX11 -fPIC -Wl,-soname,prtscn -o prtscn.so prtscn.c
+
+sudo cp lcdmodule.so /usr/lib/lcdmodule.so
+sudo cp libkedei.so /usr/lib/libkedei.so

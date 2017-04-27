@@ -1,5 +1,7 @@
 #include <Python.h>
 #include "libkedei.h"
+
+
 static PyObject* py_lcd_open(PyObject* self, PyObject *args) {
 	int r = lcd_open();
 	return Py_BuildValue("l",r);
@@ -19,6 +21,27 @@ static PyObject* py_lcd_clear(PyObject* self, PyObject* args) {
 	int clr = 0;
 	PyArg_ParseTuple(args, "i", &clr);
 	lcd_clear(clr);
+	return Py_BuildValue("l",0);
+}
+
+static PyObject* py_lcd_cmd(PyObject* self, PyObject* args) {
+	uint32_t d;
+	PyArg_ParseTuple(args,"I",&d);
+	lcd_cmd(d);
+	return Py_BuildValue("l",0);
+}
+
+static PyObject* py_lcd_data(PyObject* self, PyObject* args) {
+	uint32_t d;
+	PyArg_ParseTuple(args,"I",&d);
+	lcd_data(d);
+	return Py_BuildValue("l",0);
+}
+
+static PyObject* py_lcd_area(PyObject* self, PyObject* args) {
+	uint32_t x,y,ex,ey;
+	PyArg_ParseTuple(args,"IIII",&x,&y,&ex,&ey);
+	lcd_area(x,y,ex,ey);
 	return Py_BuildValue("l",0);
 }
 
@@ -106,8 +129,11 @@ static PyMethodDef LcdMethods[] = {
 	{ "lcdReset", py_lcd_reset, METH_VARARGS},
 	{ "lcdInit", py_lcd_init, METH_VARARGS},
 	{ "lcdClear", py_lcd_clear, METH_VARARGS},
+	{ "lcdCMD", py_lcd_cmd, METH_VARARGS},
+	{ "lcdData", py_lcd_data, METH_VARARGS},
 	{ "lcdRectangle", py_lcd_rectangle, METH_VARARGS},
 	{ "lcdRectangleEmpty", py_lcd_rectangle_empty, METH_VARARGS},
+	{ "lcdArea", py_lcd_area, METH_VARARGS},
 	{ "lcdMatrix", py_lcd_matrix, METH_VARARGS},
 	{ "lcdLoadChars", py_lcd_load_chars, METH_VARARGS},
 	{ "lcdDrawSymbol", py_lcd_draw_symbol, METH_VARARGS},

@@ -27,6 +27,7 @@ extern void lcd_reset(void);
 extern void lcd_data(uint16_t data);
 extern void lcd_cmd(uint16_t cmd);
 extern void lcd_clear(uint32_t clr);
+extern void lcd_area(uint16_t sx, uint16_t sy, uint16_t x, uint16_t y);
 extern void lcd_rectangle(uint32_t x, uint32_t y, uint32_t ex, uint32_t ey, uint32_t clr);
 extern void lcd_rectangle_empty(uint32_t x, uint32_t y, uint32_t ex, uint32_t ey,  uint32_t clr1, uint32_t clr2);
 extern void lcd_matrix(uint32_t x, uint32_t y, uint32_t ex, uint32_t ey, uint32_t *matrix, uint32_t size, uint8_t transform, uint32_t transformer);

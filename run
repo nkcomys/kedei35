@@ -1,5 +1,5 @@
 #!/bin/bash
-LD_LIBRARY_PATH=/home/pi/Kedei35
-export LD_LIBRARY_PATH
-python test.py
+#LD_LIBRARY_PATH=/home/pi/kedei35
+#export LD_LIBRARY_PATH
+sudo python test2.py
 
